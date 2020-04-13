@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CRM系统登录</title>
+
+<link rel="stylesheet" href="/static/css/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+<body class="login-bg">
+
+
+<div class="materialContainer login layui-anim layui-anim-up">
+	<form method="post" class="layui-form" >
+	<div class="box">
+		<div class="title">登录</div>
+		<div class="input">
+			<label for="empName">用户名</label>
+			<input type="text" name="empName" lay-verify="required" id="empName"  class="layui-input">
+			<span class="spin"></span>
+		</div>
+		<div class="input">
+			<label for="pwd">密码</label>
+			<input type="password" name="pwd" lay-verify="required" id="pwd" class="layui-input">
+			<span class="spin"></span>
+		</div>
+		<div class="button login">
+			<button lay-submit lay-filter="login">
+				<span>登录</span>
+				<i class="fa fa-check"></i>
+			</button>
+		</div>
+		<a href="javascript:" class="pass-forgot">忘记密码？</a>
+	</div>
+
+	</form>
+
+</div>
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+<script src="/static/js/index.js"></script>
+<script>
+	$(function  () {
+		layui.use('form', function(){
+			var form = layui.form;
+
+			//监听提交
+			form.on('submit(login)', function(data){
+				$.ajax({
+					type: "post",
+					/*请求方法*/
+					url: "/doLogin",
+					/*请求的url*/
+
+					data: JSON.stringify(data.field), //{"empName":"admin","pwd":"123"}
+
+					contentType : "application/json;charsetset=UTF-8",//必须
+					dataType: "JSON",         //必须
+					/*服务器返回的数据格式*/
+					success: function(data) { /*请求成功后的回调函数。data是服务器返回的数据*/
+						console.log(data);
+						if(data.code == "ok") {
+							console.log("登录成功！")
+							layer.msg("登录成功！");
+							location.href='/index'
+						} else {
+							layer.msg("登录失败！");
+						}
+						return true;
+					},
+					error: function() { /*error 在请求出错时调用*/
+						alert("请求失败.....");
+					},
+					timeout: 6000
+					/*设置请求超时时间（毫秒）*/
+				});
+
+				return false;
+			});
+		});
+	})
+</script>
+<!-- 底部结束 -->
+<script>
+	//百度统计可去掉
+	var _hmt = _hmt || [];
+	(function() {
+		var hm = document.createElement("script");
+		hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	})();
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pmj.crm.mapper.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.pmj.crm.entity.Role">
+        <id column="role_id" property="roleId" />
+        <result column="role_name" property="roleName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+        <collection  property="permissionList"   resultMap="com.pmj.crm.mapper.PermissionMapper.BaseResultMap" />
+        <collection  property="departmentList"   resultMap="com.pmj.crm.mapper.DepartmentMapper.BaseResultMap" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        role_id, role_name, create_time, update_time, is_del
+    </sql>
+
+    <select id="selectRolePage" resultMap="BaseResultMap">
+        SELECT r.role_id,r.role_name,r.create_time,r.update_time,r.is_del,p.* FROM role r
+               LEFT JOIN role_permission rp on r.role_id = rp.role_id
+               LEFT JOIN permission p ON rp.perm_id = p.perm_id where r.is_del = 0
+    </select>
+
+
+    <insert id="insertRole" useGeneratedKeys="true" keyProperty="roleId" parameterType="com.pmj.crm.entity.Role">
+        insert into role(role_name, create_time, update_time, is_del) values (#{roleName},#{createTime},#{updateTime},#{isDel})
+    </insert>
+
+
+
+
+</mapper>

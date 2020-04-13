@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pmj.crm.mapper.EmployeeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.pmj.crm.entity.Employee">
+        <id column="emp_id" property="empId" />
+        <result column="emp_name" property="empName" />
+        <result column="pwd" property="pwd" />
+        <result column="salt" property="salt" />
+        <result column="age" property="age" />
+        <result column="sex" property="sex" />
+        <result column="phone" property="phone" />
+        <result column="address" property="address" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+      <collection  property="roleList"   resultMap="com.pmj.crm.mapper.RoleMapper.BaseResultMap" />
+    </resultMap>
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select distinct e.emp_id,emp_name,pwd, salt,age,sex,phone,address,e.create_time,e.update_time,e.is_del,
+                r.role_id,role_name,d.dept_id,dept_name
+	    from employee e
+	        left join emp_role er on e.emp_id = er.emp_id		-- 员工和角色的关系
+	        left join role r on r.role_id = er.role_id
+            LEFT JOIN dept_role dr ON r.role_id = dr.role_id
+			LEFT JOIN department d ON d.dept_id = dr.dept_id
+</sql>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        <include refid="Base_Column_List" />
+        where e.is_del =0
+    </select>
+
+    <select id="selectByName" parameterType="String" resultMap="BaseResultMap">
+        select distinct e.emp_id,emp_name,pwd, salt,age,sex,phone,address,e.create_time,e.update_time,e.is_del,
+                r.role_id,role_name,p.perm_id,perm_name,permission,url,d.dept_id,dept_name
+	    from employee e
+	        left join emp_role er on e.emp_id = er.emp_id		-- 员工和角色的关系
+	        left join role r on r.role_id = er.role_id
+			LEFT JOIN role_permission rp ON r.role_id= rp.role_id
+			LEFT JOIN permission p ON p.perm_id= rp.perm_id
+			LEFT JOIN dept_role dr ON r.role_id = dr.role_id
+			LEFT JOIN department d ON d.dept_id = dr.dept_id
+        where emp_name = #{empName} and e.is_del =0
+    </select>
+
+</mapper>

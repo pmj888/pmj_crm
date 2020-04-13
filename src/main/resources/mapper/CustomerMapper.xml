@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pmj.crm.mapper.CustomerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.pmj.crm.entity.Customer">
+        <id column="customer_id" property="customerId" />
+        <result column="customer_name" property="customerName" />
+        <result column="sex" property="sex" />
+        <result column="telphone" property="telphone" />
+        <result column="company" property="company" />
+        <result column="address" property="address" />
+        <result column="emp_id" property="empId" />
+        <result column="is_orders" property="isOrders" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        SELECT c.*,e.emp_name FROM customer c LEFT JOIN employee e ON c.emp_id = e.emp_id
+    </sql>
+
+
+    <select id="queryCustomerByEmpId" resultMap="BaseResultMap">
+        <include refid="Base_Column_List"/>
+        where c.emp_id=#{empId}
+    </select>
+</mapper>

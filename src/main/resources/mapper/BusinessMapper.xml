@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pmj.crm.mapper.BusinessMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.pmj.crm.entity.Business">
+        <id column="business_id" property="businessId" />
+        <result column="business_name" property="businessName" />
+        <result column="emp_id" property="empId" />
+        <result column="telphone" property="telphone" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="baseBusinessQueryList">
+        SELECT b.*,e.emp_name FROM business b LEFT JOIN employee e ON b.emp_id = e.emp_id
+    </sql>
+
+    <select id="queryBusiness" resultMap="BaseResultMap">
+        <include refid="baseBusinessQueryList"/>
+    </select>
+
+</mapper>

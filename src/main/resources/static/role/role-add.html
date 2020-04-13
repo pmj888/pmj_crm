@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/formSelects-v4.css">
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style>
+        .x-red{
+            color: red;
+        }
+</style>
+<body>
+<div class="x-body">
+
+    <form class="layui-form">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label ">
+                <span class="x-red">*</span>角色名称
+            </label>
+            <div class="layui-input-inline">
+            <input type="text" name="roleName" required="" lay-verify="required|studentName"
+                   autocomplete="off" class="layui-input empName">
+        </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色权限</label>
+                <div class="layui-input-inline">
+                    <select id="sysusers" name="permId" xm-select-height="36px" xm-select="select2">
+                        <!-- <option value="">请选择</option>
+                             <option value="0">北京</option>
+                             <option value="1">上海</option>
+                             <option value="2">重庆</option> -->
+                    </select>
+                </div>
+            </div>
+
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="add" lay-submit="">
+                增加
+            </button>
+        </div>
+        </div>
+    </form>
+
+</div>
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+<script src="/static/js/formSelects-v4.js" charset="utf-8"></script>
+
+<script>
+
+    //注册插件
+    layui.config({
+        base: '/static/js/formSelects-v4.js' //路径为插件
+    }).extend({
+        formSelects: 'formSelects-v4'
+    });
+
+
+    //使用插件，在layui.use中添加formSelects
+    layui.use(['element', 'laydate', 'table', 'layer', 'form', 'laypage', 'upload', 'tree', 'formSelects'],
+    function () {
+        var element = layui.element
+        laydate = layui.laydate,
+            table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            upload = layui.upload,
+            tree = layui.tree,
+            laypage = layui.laypage,
+            formSelects = layui.formSelects;
+        form.render();
+        formSelects.btns('select2', []);
+
+
+        var keys = []
+        $.ajax({
+            url: "/getPermName",
+            type: "post",
+            async: true,
+            /*data:{typeKey},*/
+            success: function (data) {
+                //console.log(data, '系统用户');
+                if(data.data){
+                    for (var i = 0; i < data.data.length; i++) { //formSelects-v4只支持name和value两个属性，使用时必须为josn格式属性必须为name和value
+                        var temp = {
+                            "name": data.data[i].permName,
+                            "value": data.data[i].permId  //value为唯一标识，此处为id
+                        }
+                        keys.push(temp)
+                    }
+                    console.log(keys)
+                    formSelects.data('select2', 'local', { //请求数据后，将数据动态渲染到下拉框中
+                        arr: keys
+                    });
+                    form.render();
+                }
+            },
+        });
+
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            console.log(data.field);
+            //发异步，把数据提交给php
+            // layer.alert("保存成功", {icon: 6},function () {
+            // 获得frame索引
+            var index = parent.layer.getFrameIndex(window.name);
+            //关闭当前frame
+            //parent.layer.close(index);
+            $.ajax({
+                //提交数据的类型 POST GET
+                type: "POST",
+                //提交的网址
+                url: "/role",
+                //提交的数据
+                data: data.field,
+                //返回数据的格式
+                datatype: "json",//“xml”, “html”, “script”, “json”, “jsonp”, “text”.
+                //成功返回之后调用的函数
+                success: function (data) {
+                    console.log(data);
+                    if (data.state == 1) {
+                        //obj.del();
+                        layer.close(index);
+                        layer.msg(data.msg, {icon: 6});
+                        // 重新刷新表格数据
+                        window.parent.location.reload();
+                    } else {
+                        layer.msg(data.msg, {icon: 5});
+                    }
+                }
+            });
+            return false;
+        });
+
+        // });
+    });
+
+
+
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+
+</html>

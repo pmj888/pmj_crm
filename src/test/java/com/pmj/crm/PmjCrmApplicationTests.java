@@ -28,7 +28,7 @@ class PmjCrmApplicationTests {
     public void randomSalt() {
         SecureRandomNumberGenerator secureRandom = new SecureRandomNumberGenerator();
         String hex = secureRandom.nextBytes(24).toHex();
-        System.out.println(hex+"test111");
+        System.out.println(hex+"222222");
     }
 
 }
